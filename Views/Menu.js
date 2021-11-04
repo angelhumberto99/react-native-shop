@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Store from './Store';
+import Sell from './Sell';
+import MyProducts from './MyProducts';
+import MyAccount from './MyAccount';
 
 const Tab = createBottomTabNavigator();
 
@@ -15,15 +18,13 @@ class Menu extends Component {
                   let iconName;
                   
                   if (route.name === 'Tienda') {
-                    iconName = focused
-                    ? 'add-circle'
-                    : 'add-circle-outline';
+                    iconName = focused ? 'cart' : 'cart-outline';
                   } else if (route.name === 'Vender') {
-                    iconName = focused ? 'list' : 'list-outline';
-                  } else if (route.name === 'Editar') {
-                    iconName = focused? 'pencil' : 'pencil-outline';
+                    iconName = focused ? 'pricetags' : 'pricetags-outline';
+                  } else if (route.name === 'Mis productos') {
+                    iconName = focused ? 'pencil' : 'pencil-outline';
                   } else if (route.name === 'Mi cuenta') {
-                    iconName = focused? 'trash' : 'trash-outline';
+                    iconName = focused ? 'person-circle' : 'person-circle-outline';
                   }
                   
                   // You can return any component that you like here!
@@ -39,11 +40,11 @@ class Menu extends Component {
               {/* tab para comprar */}
               <Tab.Screen name="Tienda" component={Store} />
               {/* tab para vender productos  */}
-              <Tab.Screen name="Vender" component={Store} />
+              <Tab.Screen name="Vender" component={Sell} />
               {/* tab para editar mis productos publicados */}
-              <Tab.Screen name="Editar" component={Store} />
+              <Tab.Screen name="Mis productos" component={MyProducts} />
               {/* tab para mostrar los datos de mi cuenta */}
-              <Tab.Screen name="Mi cuenta" component={Store} />
+              <Tab.Screen name="Mi cuenta" children={() => <MyAccount loadPage={this.props.loadPage}/>} />
             </Tab.Navigator>
         )
     }

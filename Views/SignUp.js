@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import NetInfo from "@react-native-community/netinfo";
 import { LoginStyle as styles } from '../Styles/LoginStyle';
 import Icon from 'react-native-vector-icons/Ionicons';
+import md5 from 'md5';
 
 class SignUp extends Component {
     constructor(props) {
@@ -9,14 +11,55 @@ class SignUp extends Component {
         this.state = {
             hide: true,
             name: '',
-            mail: '',
+            email: '',
             password: '',
             passAux: '',
         }
     }
 
+    fetchData = () => {
+        // URL del servidor
+        var url = 'https://angelgutierrezweb.000webhostapp.com/sign_Up.php';
+        // Datos que se guardarán en la base de datos
+        var data = {
+            name: this.state.name,
+            password: md5(this.state.password),
+            email: this.state.email
+        };
+        // Se hace la petición por el método POST
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {
+            console.log('Success:', response)
+            if (response === '0') {
+                Alert.alert(
+                    "Error de conexión",
+                    "Ha existido un error al conectar con la base de datos, intente de nuevo",
+                    [{text: "OK"}]
+                );
+            } else {
+                this.setState({
+                    hide: true,
+                    name: '',
+                    email: '',
+                    password: '',
+                    passAux: '',
+                })
+                this.props.loadPage("menu");
+            }
+
+        });
+    }
+
     endSignUp = () => {
         var band = false;
+        // Evaluamos que los campos del formulario hayan sido llenados
         Object.keys(this.state).map((e) => {
             if (e != 'hide') {
                 if (this.state[e] === ''){
@@ -25,40 +68,46 @@ class SignUp extends Component {
             }
         });
 
-        if (band) {
+        if (band) { // Revisa que se hayan llenado todos los campos del formulario
             Alert.alert(
                 "Campo vacio",
                 "Alguno de los campos no fue llenado correctamente.  \n\nVerifique su información",
                 [{text: "OK"}]
             );
-        } else if (this.state.password !== this.state.passAux) {
+        } else if (this.state.password !== this.state.passAux) { // Revisa que las contraseñas sean identicas
             Alert.alert(
                 "Las contraseñas no coinciden",
                 "Verifique su información, e intentelo de nuevo",
                 [{text: "OK"}]
             );
-        } else if (!this.state.mail.match(/.@.\../)) {
+        } else if (!this.state.email.match(/.+@.+\..+/)) { // Revisa que el correo tenga formato
             Alert.alert(
                 "Correo erroneo",
                 "Verifique su información, e intentelo de nuevo",
                 [{text: "OK"}]
             );
         } else {
-            this.setState({
-                hide: true,
-                name: '',
-                mail: '',
-                password: '',
-                passAux: '',
-            })
-            this.props.loadPage("menu");
+            // Se revisa la conexión para realizar la llamada al servidor
+            NetInfo.fetch("wifi").then(state => {
+                if (state.isConnected) {
+                    this.fetchData();
+                } else {
+                    Alert.alert(
+                        "Fallo de conexión",
+                        "Verifique que su dispositivo cuente con una conexión a internet estable",
+                        [{text: "OK"}]
+                    ); 
+                }
+            });
         }
     }
 
     goBack = () => {
+        // Regresa a la página de inicio de sesión
         this.props.loadPage("sign in");
     }
     
+    // Formulario para registrarse como usuario
     render() {
         return (
             <View style={styles.container}>
@@ -72,8 +121,8 @@ class SignUp extends Component {
                                     style={styles.textInput} value={this.state.name}
                                     placeholder="Nombre"
                                     />
-                            <TextInput onChangeText={(mail) => this.setState({mail})} 
-                                    style={styles.textInput} value={this.state.mail}
+                            <TextInput onChangeText={(email) => this.setState({email})} 
+                                    style={styles.textInput} value={this.state.email}
                                     placeholder="Correo"
                                     keyboardType="email-address"
                                     />
