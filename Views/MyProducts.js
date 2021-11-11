@@ -1,11 +1,14 @@
-import React, { Component } from 'react'
-import { Text, View } from 'react-native'
+import React, { Component } from 'react';
+import { Text, View } from 'react-native';
+import { MenuStyles } from '../Styles/MenuStyles';
 
 class MyProducts extends Component {
     render() {
         return (
-            <View>
-                <Text> Mis productos </Text>
+            <View style={MenuStyles.pageContainer}>
+                <View style={MenuStyles.mainContainer}>
+                    <Text> Mis productos </Text>
+                </View>
             </View>
         )
     }

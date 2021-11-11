@@ -51,7 +51,7 @@ class SignUp extends Component {
                     password: '',
                     passAux: '',
                 })
-                this.props.loadPage("menu");
+                this.props.navigation.navigate("Menu");
             }
 
         });
@@ -104,7 +104,7 @@ class SignUp extends Component {
 
     goBack = () => {
         // Regresa a la página de inicio de sesión
-        this.props.loadPage("sign in");
+        this.props.navigation.goBack();
     }
     
     // Formulario para registrarse como usuario

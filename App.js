@@ -1,51 +1,32 @@
 import React, { Component } from 'react';
 import { StatusBar } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Login from './Views/Login';
 import SignUp from './Views/SignUp';
 import Menu from './Views/Menu';
 
+const Stack = createNativeStackNavigator();
+
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      currentView: 'sign in',
-    }
+    this.state = {}
   }
-
-  handleView = (view) => {
-    this.setState({currentView: view});
-  }
-
-  renderState = () => {
-    switch (this.state.currentView) {
-      case 'sign in':
-        return (
-          <NavigationContainer>
-            <StatusBar backgroundColor="#424b54"/>
-            <Login loadPage={this.handleView}/>
-          </NavigationContainer>
-        );
-      case 'sign up':
-        return (
-          <NavigationContainer>
-            <StatusBar backgroundColor="#424b54"/>
-            <SignUp loadPage={this.handleView}/>
-          </NavigationContainer>
-        );
-      case 'menu':
-        return (
-          <NavigationContainer>
-            <StatusBar backgroundColor="#424b54"/>
-            <Menu loadPage={this.handleView}/>
-          </NavigationContainer>
-        );
-    }
-    return 
-  }
+  
   render() {
     return (
-      this.renderState()
+      <NavigationContainer>
+        <Stack.Navigator 
+          screenOptions={{
+            headerShown: false
+          }}
+        >
+          <Stack.Screen name="Login" component={Login}/>
+          <Stack.Screen name="Sign Up" component={SignUp}/>
+          <Stack.Screen name="Menu" component={Menu}/>
+        </Stack.Navigator>
+      </NavigationContainer>
     );
   }
 }

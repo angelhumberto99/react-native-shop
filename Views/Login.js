@@ -30,8 +30,9 @@ class Login extends Component {
                     [{text: "OK"}]
                 );
             } else {
-                this.setState({email: '', password: ''});
-                this.props.loadPage("menu")
+                var email = this.state.email;
+                this.setState({email: '', password: '', hide: true});
+                this.props.navigation.navigate("Menu", {email});
             }
         });
     }
@@ -67,8 +68,7 @@ class Login extends Component {
     }
 
     signUp = () => {
-        // Envia a la página de registro
-        this.props.loadPage("sign up")
+        this.props.navigation.navigate('Sign Up')
     }
 
     // Formulario de inicio de sesión
@@ -103,7 +103,6 @@ class Login extends Component {
                             <Text style={styles.btnText}>Registrarse</Text>
                         </TouchableOpacity>
                     </View>
-
                 </View>
             </View>
         )

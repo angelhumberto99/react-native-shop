@@ -5,6 +5,7 @@ import Store from './Store';
 import Sell from './Sell';
 import MyProducts from './MyProducts';
 import MyAccount from './MyAccount';
+import { MenuStyles as Styles } from '../Styles/MenuStyles';
 
 const Tab = createBottomTabNavigator();
 
@@ -14,6 +15,7 @@ class Menu extends Component {
             <Tab.Navigator
               screenOptions={({ route }) => ({
                 headerShown: false,
+                tabBarShowLabel: false,
                 tabBarIcon: ({ focused, color, size }) => {
                   let iconName;
                   
@@ -27,13 +29,17 @@ class Menu extends Component {
                     iconName = focused ? 'person-circle' : 'person-circle-outline';
                   }
                   
-                  // You can return any component that you like here!
                   return <Ionicons name={iconName} size={size} color={color} />;
                 },
-                tabBarActiveTintColor: 'white',
+                tabBarActiveTintColor: '#ed2143',
                 tabBarInactiveTintColor: '#2C2B2E',
                 tabBarStyle: {
-                  backgroundColor: '#93a8ac',
+                  backgroundColor: 'white',
+                  position: 'absolute',
+                  bottom: 15,
+                  left: 15,
+                  right: 15,
+                  borderRadius: 15,
                 },
               })}
             >
@@ -44,7 +50,8 @@ class Menu extends Component {
               {/* tab para editar mis productos publicados */}
               <Tab.Screen name="Mis productos" component={MyProducts} />
               {/* tab para mostrar los datos de mi cuenta */}
-              <Tab.Screen name="Mi cuenta" children={() => <MyAccount loadPage={this.props.loadPage}/>} />
+              <Tab.Screen name="Mi cuenta" children={() => <MyAccount navigation={this.props.navigation} 
+                          email={this.props.route.params.email}/>}/>
             </Tab.Navigator>
         )
     }
