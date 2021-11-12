@@ -4,6 +4,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { LoginStyle as styles } from '../Styles/LoginStyle';
 import Icon from 'react-native-vector-icons/Ionicons';
 import md5 from 'md5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class Login extends Component {
 
@@ -13,6 +14,38 @@ class Login extends Component {
             email: '',
             password: '',
             hide: true,
+        }
+    }
+
+    componentDidMount() {
+        this.checkStore()    
+    }
+
+    checkStore = async () => {
+        try {
+            const jsonData = await AsyncStorage.getItem('@credentials')
+            if (jsonData !== null) {
+                const data = JSON.parse(jsonData)
+                console.log(data)
+                var { email, user } = data
+                this.props.navigation.navigate("Menu", {email, user});
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    }
+
+    storeData = async (email, response) => {
+        try {
+            var jsonData = JSON.stringify({email:email, user:response});
+            console.log("email: ", email);
+            console.log("user: ", response);
+            console.log(jsonData);
+            await AsyncStorage.setItem('@credentials', jsonData);
+            this.setState({email: '', password: '', hide: true});
+            this.props.navigation.navigate("Menu", {email, user: response});
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -31,8 +64,8 @@ class Login extends Component {
                 );
             } else {
                 var email = this.state.email;
-                this.setState({email: '', password: '', hide: true});
-                this.props.navigation.navigate("Menu", {email});
+                // guardamos el token para mantener la sesión abierta
+                this.storeData(email, response);
             }
         });
     }

@@ -1,20 +1,14 @@
 import React, { Component } from 'react';
-import { Text,
-         View,
-         Button,
-         Image,
-         ScrollView, 
-         TouchableOpacity, 
-         Alert, 
-         TouchableWithoutFeedback,
-         Dimensions,
-         ImageBackground 
-        } from 'react-native';
+import { Text, View, Button, Image,ScrollView, 
+         TouchableOpacity, Alert, TouchableWithoutFeedback, 
+         Dimensions, ImageBackground, TextInput, } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { SellStyles as styles } from '../Styles/SellStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
+import { Picker } from '@react-native-picker/picker';
+import { LoginStyle as InputStyles } from '../Styles/LoginStyle';
 
 const screenWidth = Dimensions.get('window').width;
 const maxImages = 6
@@ -25,8 +19,29 @@ class Sell extends Component {
         this.state = {
             photos: [],
             activeIndex: 0,
+            category: "Vehículos",
+            title: "",
+            price: "",
+            description: "",
+            stock: "",
         }
     }
+
+    categories = [
+        "Vehículos",
+        "Tecnología",
+        "Electrodomésticos",
+        "Hogar y muebles",
+        "Moda",
+        "Deportes",
+        "Herramientas",
+        "Construcción",
+        "Oficina",
+        "Juegos y Juguetes",
+        "Salud y Equipamiento Médico",
+        "Belleza y Cuidado Personal",
+        "Inmuebles",
+    ]
 
     pickImage = () => {
         if (this.state.photos.length === maxImages) {
@@ -137,9 +152,19 @@ class Sell extends Component {
         )
     }
 
+    storeData = () => {
+        console.log(this.state);
+        // validación de campos vacios
+        // hacer un fetch(POST) para enviar toda la información
+        // hacer un fetch(POST) para cargar las imagenes al servidor
+    }
+
     render() {
         return (
             <View style={MenuStyles.pageContainer}>
+                <View style={MenuStyles.header}>
+                    <Text style={MenuStyles.headerText}>Vender</Text>
+                </View>
                 <View style={MenuStyles.mainContainer}>
                     <ScrollView style={styles.scrollContainer}>
                         <View style={styles.scrollBody}>
@@ -166,10 +191,46 @@ class Sell extends Component {
                                 inactiveDotOpacity={0.4}
                                 inactiveDotScale={0.6}
                             />
-                            
+                            <View style={[styles.pickerContainer, this.state.photos.length > 0? {marginTop:0}: {}]}>
+                                <Picker selectedValue={this.state.category}
+                                        onValueChange={(category) => this.setState({category})}
+                                        style={styles.picker}
+                                >
+                                    { 
+                                        this.categories.map((e, i) => {
+                                            return <Picker.Item label={e} value={e} key={i}/>
+                                        }) 
+                                    }
+                                </Picker>
+                            </View>
+
+                            <TextInput onChangeText={(title) => this.setState({title})} 
+                               style={InputStyles.textInput} value={this.state.title}
+                               placeholder="Titulo"
+                            />
+                            <TextInput onChangeText={(price) => this.setState({price})} 
+                               style={InputStyles.textInput} value={this.state.price}
+                               placeholder="Precio"
+                               keyboardType="numeric"
+                            />
+                            <TextInput onChangeText={(description) => this.setState({description})} 
+                               style={InputStyles.textInput} value={this.state.description}
+                               multiline={true}
+                               placeholder="Descripción"
+                            />
+                            <TextInput onChangeText={(stock) => this.setState({stock})} 
+                               style={InputStyles.textInput} value={this.state.stock}
+                               placeholder="Unidades"
+                               keyboardType="numeric"
+                            />
+                            <TouchableOpacity style={styles.sendBtn} onPress={this.storeData}>
+                                <Text style={styles.sendTxt}>Enviar</Text>
+                                <Icon name={"arrow-up"} size={25} color="#424b54" style={styles.icon} />
+                            </TouchableOpacity>
                         </View>
                     </ScrollView>
                 </View>
+                <View style={MenuStyles.menu}/>
             </View>
         )
     }

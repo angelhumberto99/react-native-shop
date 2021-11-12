@@ -3,11 +3,31 @@ import { StyleSheet } from 'react-native';
 export const MenuStyles = StyleSheet.create({
     pageContainer: {
         flex: 1,
-        backgroundColor: '#cccccc',
+        backgroundColor: '#ced7d9',
     },
     mainContainer: {
-        height: '90%',
+        flex: 1,
         alignItems: 'center',
-        paddingTop: 20,
     },
+    header: {
+        backgroundColor: '#424b54',
+        height: 50,
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        elevation: 4,
+    },
+    headerText: {
+        color: 'gray',
+        textAlign: 'center',
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+        fontSize: 25,
+    },
+    menu:{
+        height: 65,
+    }
 });

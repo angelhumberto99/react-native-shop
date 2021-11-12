@@ -4,6 +4,7 @@ import NetInfo from "@react-native-community/netinfo";
 import { LoginStyle as styles } from '../Styles/LoginStyle';
 import Icon from 'react-native-vector-icons/Ionicons';
 import md5 from 'md5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 class SignUp extends Component {
     constructor(props) {
@@ -14,6 +15,26 @@ class SignUp extends Component {
             email: '',
             password: '',
             passAux: '',
+        }
+    }
+
+    storeData = async (email, user) => {
+        try {
+            var jsonData = JSON.stringify({email, user});
+            console.log("email: ", email);
+            console.log("user: ", user);
+            console.log(jsonData);
+            await AsyncStorage.setItem('@credentials', jsonData);
+            this.setState({
+                hide: true,
+                name: '',
+                email: '',
+                password: '',
+                passAux: '',
+            })
+            this.props.navigation.navigate("Menu", {email, user});
+        } catch (e) {
+            console.log(e)
         }
     }
 
@@ -44,14 +65,10 @@ class SignUp extends Component {
                     [{text: "OK"}]
                 );
             } else {
-                this.setState({
-                    hide: true,
-                    name: '',
-                    email: '',
-                    password: '',
-                    passAux: '',
-                })
-                this.props.navigation.navigate("Menu");
+                var email = this.state.email
+                var name = this.state.name
+                // guardamos el token para mantener la sesión abierta
+                this.storeData(email, name)
             }
 
         });

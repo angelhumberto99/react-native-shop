@@ -11,6 +11,7 @@ const Tab = createBottomTabNavigator();
 
 class Menu extends Component {
     render() {
+        const { email, user } = this.props.route.params
         return (
             <Tab.Navigator
               screenOptions={({ route }) => ({
@@ -34,24 +35,24 @@ class Menu extends Component {
                 tabBarActiveTintColor: '#ed2143',
                 tabBarInactiveTintColor: '#2C2B2E',
                 tabBarStyle: {
-                  backgroundColor: 'white',
+                  backgroundColor: '#e4eaeb',
                   position: 'absolute',
                   bottom: 15,
                   left: 15,
                   right: 15,
                   borderRadius: 15,
-                },
+                },  
               })}
             >
               {/* tab para comprar */}
-              <Tab.Screen name="Tienda" component={Store} />
+              <Tab.Screen name="Tienda" children={() => <Store email={email} user={user}/>}/>
               {/* tab para vender productos  */}
-              <Tab.Screen name="Vender" component={Sell} />
+              <Tab.Screen name="Vender" children={() => <Sell email={email} user={user}/>}/>
               {/* tab para editar mis productos publicados */}
-              <Tab.Screen name="Mis productos" component={MyProducts} />
+              <Tab.Screen name="Mis productos" children={() => <MyProducts email={email} user={user}/>}/>
               {/* tab para mostrar los datos de mi cuenta */}
               <Tab.Screen name="Mi cuenta" children={() => <MyAccount navigation={this.props.navigation} 
-                          email={this.props.route.params.email}/>}/>
+                          email={email} user={user}/>}/>
             </Tab.Navigator>
         )
     }

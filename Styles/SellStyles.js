@@ -3,10 +3,11 @@ import { StyleSheet } from 'react-native';
 export const SellStyles = StyleSheet.create({
     scrollContainer: {
         width: "100%",
-        height: "90%",
     },
     scrollBody: {
+        paddingTop: 20,
         alignItems: "center",
+        paddingBottom: 20,
     },
     image: {
         width: 200, 
@@ -53,5 +54,51 @@ export const SellStyles = StyleSheet.create({
         borderStyle: 'dashed',
         borderColor: 'gray',
         borderWidth: 2,
+    },
+    pickerContainer:{
+        width: '70%',
+        borderRadius: 30,
+        overflow: 'hidden',
+        marginTop: 20,
+        marginBottom: 10,
+    },
+    picker: {
+        backgroundColor: '#93a8ac',
+        color: '#424b54',
+    },
+    sendBtn: {
+        width: '70%',
+        height: 35,
+        backgroundColor: '#80bfa1',
+        borderRadius: 20,
+        marginTop: 30,
+        paddingTop: 5,
+        paddingBottom: 5,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 1
+        },
+        elevation: 3,
+    },
+    sendTxt: {
+        fontSize: 18,
+        fontStyle: 'italic',
+        fontWeight: 'bold',
+        color: "#424b54",
+    },
+    icon: {
+        position: 'absolute',
+        right: 0,
+        backgroundColor: '#5f947b',
+        borderTopRightRadius: 50,
+        borderBottomRightRadius: 50,
+        width: 50,
+        height: 35,
+        paddingTop: 5,
+        paddingLeft: 10,
     },
 })

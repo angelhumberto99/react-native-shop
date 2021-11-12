@@ -30,7 +30,7 @@ export const LoginStyle = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         flex: 1,
-        backgroundColor: '#93a8ac',
+        backgroundColor: '#ced7d9',
     },
     card: {
         height: '75%',

@@ -6,9 +6,14 @@ class MyProducts extends Component {
     render() {
         return (
             <View style={MenuStyles.pageContainer}>
-                <View style={MenuStyles.mainContainer}>
-                    <Text> Mis productos </Text>
+                <View style={MenuStyles.header}>
+                    <Text style={MenuStyles.headerText}>Mis productos</Text>
                 </View>
+                <View style={MenuStyles.mainContainer}>
+                    <Text> {this.props.user} </Text>
+                    <Text> {this.props.email} </Text>
+                </View>
+                <View style={MenuStyles.menu}/>
             </View>
         )
     }
