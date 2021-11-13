@@ -10,8 +10,6 @@ class Store extends Component {
                     <Text style={MenuStyles.headerText}>Tienda</Text>
                 </View>
                 <View style={MenuStyles.mainContainer}>
-                    <Text> {this.props.user} </Text>
-                    <Text> {this.props.email} </Text>
                 </View>
                 <View style={MenuStyles.menu}/>
             </View>

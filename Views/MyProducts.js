@@ -10,8 +10,6 @@ class MyProducts extends Component {
                     <Text style={MenuStyles.headerText}>Mis productos</Text>
                 </View>
                 <View style={MenuStyles.mainContainer}>
-                    <Text> {this.props.user} </Text>
-                    <Text> {this.props.email} </Text>
                 </View>
                 <View style={MenuStyles.menu}/>
             </View>
