@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, RefreshControl } from 'react-native';
+import { Text, View, ScrollView, FlatList, RefreshControl, Alert } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import ProductCard from '../components/ProductCard';
 import { ProductCardStyles as styles } from '../Styles/ProductCardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NetInfo from "@react-native-community/netinfo";
 
 class Store extends Component {
     constructor(props) {
@@ -19,28 +20,69 @@ class Store extends Component {
         this.getProducts();
     }
 
-    getProducts = () => {
-        fetch("https://angelgutierrezweb.000webhostapp.com/get_articles.php")
-        .then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => {
-            console.log(response);
-            this.setState({products: response})
+    getProducts = () => {  
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                fetch("https://angelgutierrezweb.000webhostapp.com/get_articles.php")
+                .then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    this.setState({products: response})
+                });
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
         });
     }
 
     storeData = async () => {
         try {
             var jsonData = JSON.stringify(this.state.cart);
-            console.log(jsonData)
             await AsyncStorage.setItem('@cart', jsonData);
+            jsonData = JSON.stringify({update: "store"});
+            await AsyncStorage.setItem('@update', jsonData);
         } catch (e) {
             console.log(e)
         }
     }
     
+    loadData = async (product) => {
+        try {
+            const jsonData = await AsyncStorage.getItem('@cart')
+            if (jsonData !== null) {
+                const data = JSON.parse(jsonData)
+                this.setState({cart: [...data, ...[product]]}, () => this.storeData())
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    }
+
+    checkData = async (product) => {
+        try {
+            const jsonData = await AsyncStorage.getItem('@update')
+            if (jsonData !== null) {
+                const data = JSON.parse(jsonData)
+                if (data.update === "cart") {
+                    this.loadData(product)
+                } else {
+                    this.setState({cart: [...this.state.cart, ...[product]]}, () => this.storeData())
+                }
+            } else {
+                this.setState({cart: [...this.state.cart, ...[product]]}, () => this.storeData())
+            }
+        } catch(e) {
+            console.log(e)
+        }
+    }
+
     cartHandler = (product) => {
-        this.setState({cart: [...this.state.cart, ...[product]]}, () => this.storeData())
+        this.checkData(product)
     }
 
     refresh = () => {

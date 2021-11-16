@@ -25,7 +25,6 @@ class Cart extends Component {
             if (jsonData !== null) {
                 const data = JSON.parse(jsonData)
                 this.setState({products: data, refreshing: false})
-                console.log(this.state)
             }
         } catch(e) {
             console.log(e)
@@ -35,8 +34,9 @@ class Cart extends Component {
     storeData = async () => {
         try {
             var jsonData = JSON.stringify(this.state.products);
-            console.log(jsonData)
             await AsyncStorage.setItem('@cart', jsonData);
+            jsonData = JSON.stringify({update: "cart"});
+            await AsyncStorage.setItem('@update', jsonData);
         } catch (e) {
             console.log(e)
         }
