@@ -5,6 +5,7 @@ import ProductCard from '../components/ProductCard';
 import { ProductCardStyles as styles } from '../Styles/ProductCardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
+import FlashMessage, { showMessage } from "react-native-flash-message";
 
 class Store extends Component {
     constructor(props) {
@@ -82,6 +83,10 @@ class Store extends Component {
     }
 
     cartHandler = (product) => {
+        showMessage({
+            message: "Su producto lo espera en el carrito",
+            type: "success",
+        });
         this.checkData(product)
     }
 
@@ -110,12 +115,13 @@ class Store extends Component {
                                     return <View style={styles.lastItem}></View>
                                 }
                             } else{
-                                return <ProductCard product={item} cartHandler={this.cartHandler}/>
+                                return <ProductCard key={index} product={item} cartHandler={this.cartHandler} navigation={this.props.navigation}/>
                             }
                         }}
                         numColumns={2}
                     />
                 </View>
+                <FlashMessage position={{top: 50}}/>
                 <View style={MenuStyles.menu}/>
             </View>
         )

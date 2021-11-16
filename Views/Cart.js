@@ -62,6 +62,11 @@ class Cart extends Component {
         var result = moneyFormatter(total)
         return result 
     }
+
+    endPurchase = () => {
+        console.log(this.state.products)
+        this.setState({products: []}, () => this.storeData());
+    }
     
     render() {
         return (
@@ -71,29 +76,26 @@ class Cart extends Component {
                 </View>
                 <View style={MenuStyles.mainContainer}>
                     <FlatList
-                        data={[...this.state.products, ...[{name: "last"}]]}
+                        data={this.state.products}
                         style={styles.listContainer}
                         refreshControl={<RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this.refresh} />}
                         renderItem={({item, index}) => {
-                            if (this.state.products.length === 0) {
-                                return <Text>No hay productos en el carrito</Text>;
-                            } else if (item.name === "last") {
-                                return (
-                                    <View style={styles.btnContainer}>
-                                        <Text>Total: $ {this.getTotal()}</Text>
-                                        <TouchableOpacity style={styles.endPurchase}>
-                                            <Text style={styles.purchaseTxt}>Finalizar compra</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                )
-                            } else{
-                                return <CartItem index={index} product={item} handleDelete={this.handleDelete} />
-                            }
+                            return <CartItem index={index} product={item} handleDelete={this.handleDelete} />
                         }}
                     />
                 </View>
+                {
+                    this.state.products.length === 0 ?
+                    <Text style={styles.emptyCart}>No hay productos en el carrito</Text>:
+                    <View style={styles.btnContainer}>
+                        <Text style={styles.ammount}>Total: $ {this.getTotal()}</Text>
+                        <TouchableOpacity onPress={this.endPurchase} style={styles.endPurchase}>
+                            <Text style={styles.purchaseTxt}>Finalizar compra</Text>
+                        </TouchableOpacity>
+                    </View>
+                }
                 <View style={MenuStyles.menu}/>
             </View>
         )

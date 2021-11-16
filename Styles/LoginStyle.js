@@ -24,7 +24,7 @@ export const LoginStyle = StyleSheet.create({
         fontWeight: 'bold',
         fontStyle: 'italic',
         textAlign: 'center',
-        color: 'gray',
+        color: '#93a8ac',
     },
     container: {
         alignItems: 'center',

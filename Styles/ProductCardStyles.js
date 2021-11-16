@@ -1,11 +1,12 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
+const screenWidth = Dimensions.get('window').width * 0.5;
 
 export const ProductCardStyles = StyleSheet.create({
     productContainer: {
         flex: 1,
         borderRadius: 5,
         overflow: 'hidden',
-        backgroundColor: '#d1e3ed',
+        backgroundColor: '#f4fffd',
         overflow: 'hidden',
         margin: 3,
         shadowColor: "#000",
@@ -29,11 +30,13 @@ export const ProductCardStyles = StyleSheet.create({
         width: "100%",
         height: "100%",
         padding: 3,
+        marginBottom: 5,
     },
     image: {
-        width: 350,
+        marginTop: 10,
+        width: 150,
         height: 150,
-        resizeMode: 'center',
+        borderRadius: 15,
     },
     title: {
         fontSize: 16,
@@ -73,7 +76,7 @@ export const ProductCardStyles = StyleSheet.create({
         height: 35,
         backgroundColor: '#80bfa1',
         borderRadius: 20,
-        marginTop: 30,
+        marginTop: 20,
         paddingTop: 5,
         paddingBottom: 5,
         alignItems: 'center',
@@ -87,9 +90,12 @@ export const ProductCardStyles = StyleSheet.create({
     },
     cartItem: {
         width: "100%",
-        backgroundColor: '#d1e3ed',
+        backgroundColor: '#f4fffd',
         borderRadius: 5,
+        paddingLeft: 5,
         paddingRight: 10,
+        paddingTop: 5,
+        paddingBottom: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -113,7 +119,8 @@ export const ProductCardStyles = StyleSheet.create({
         padding: 5,
     },
     btnContainer: {
-        paddingBottom: 20,
+        marginBottom: 20,
+        marginTop: 20,
         width: "100%",
         alignItems: 'center',
     },
@@ -122,5 +129,16 @@ export const ProductCardStyles = StyleSheet.create({
         fontStyle: 'italic',
         fontWeight: 'bold',
         color: "#424b54",
+    },
+    emptyCart: {
+        position: 'absolute',
+        top: '50%',
+        width: '100%',
+        textAlign: 'center',
+    },
+    ammount: {
+        fontSize: 15,
+        fontStyle: 'italic',
+
     }
 })

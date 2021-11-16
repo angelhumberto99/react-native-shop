@@ -73,7 +73,6 @@ class Sell extends Component {
                     uris = uris.map(e => {
                         return {uri: e, delete: false}
                     })
-                    console.log(uris)
                     var oldData = this.state.photos.map( obj => {
                         obj.delete = false
                         return obj  
@@ -169,7 +168,6 @@ class Sell extends Component {
                 headers:headers,
                 body:JSON.stringify(Data),
             }).then((response)=>response.json()).then((response)=>{
-                console.log("server "+response)
                 this.setState({serverUri: [...this.state.serverUri, "https://angelgutierrezweb.000webhostapp.com/"+response]})
             }).then(() => {
                 if (this.state.serverUri.length == this.state.photos.length) {
@@ -206,7 +204,6 @@ class Sell extends Component {
             }
         }).then(res => res.text()
          ).then(response => {
-            console.log('Success:', response)
             if (response === '0') {
                 Alert.alert(
                     "Error de conexión",
@@ -290,7 +287,6 @@ class Sell extends Component {
                         <TouchableWithoutFeedback onPress={this.cancelAll}>
                             <View style={MenuStyles.scrollBody}>
                                 <Carousel
-                                    ref={ref => this.carousel = ref}
                                     layout={'default'} 
                                     ref={ref => this.carousel = ref}
                                     data={[...this.state.photos, ...[{uri:"add"}]]}

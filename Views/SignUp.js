@@ -21,9 +21,6 @@ class SignUp extends Component {
     storeData = async (email, user) => {
         try {
             var jsonData = JSON.stringify({email, user});
-            console.log("email: ", email);
-            console.log("user: ", user);
-            console.log(jsonData);
             await AsyncStorage.setItem('@credentials', jsonData);
             this.setState({
                 hide: true,
@@ -57,7 +54,6 @@ class SignUp extends Component {
         }).then(res => res.json())
         .catch(error => console.error('Error:', error))
         .then(response => {
-            console.log('Success:', response)
             if (response === '0') {
                 Alert.alert(
                     "Error de conexión",

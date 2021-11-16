@@ -26,7 +26,6 @@ class Login extends Component {
             const jsonData = await AsyncStorage.getItem('@credentials')
             if (jsonData !== null) {
                 const data = JSON.parse(jsonData)
-                console.log(data)
                 var { email, user } = data
                 this.props.navigation.navigate("Menu", {email, user});
             }
@@ -38,9 +37,6 @@ class Login extends Component {
     storeData = async (email, response) => {
         try {
             var jsonData = JSON.stringify({email:email, user:response});
-            console.log("email: ", email);
-            console.log("user: ", response);
-            console.log(jsonData);
             await AsyncStorage.setItem('@credentials', jsonData);
             this.setState({email: '', password: '', hide: true});
             this.props.navigation.navigate("Menu", {email, user: response});
@@ -55,7 +51,6 @@ class Login extends Component {
         .then(res => res.json())
         .catch(error => console.error('Error:', error))
         .then(response => {
-            console.log('Success:', response)
             if (response === '0') {
                 Alert.alert(
                     "Error de credenciales",
