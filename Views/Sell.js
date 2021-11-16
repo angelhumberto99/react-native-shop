@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Text, View, Button, Image,ScrollView, 
          TouchableOpacity, Alert, TouchableWithoutFeedback, 
-         Dimensions, ImageBackground, TextInput, } from 'react-native';
+         Dimensions, ImageBackground, TextInput } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -271,6 +271,14 @@ class Sell extends Component {
         }
     }
 
+    cancelAll = () => {
+        if (this.state.photos.length > 0) {
+            if (this.state.photos[0].delete === true) {
+                this.showDelete()
+            }
+        }
+    }
+
     render() {
         return (
             <View style={MenuStyles.pageContainer}>
@@ -278,68 +286,70 @@ class Sell extends Component {
                     <Text style={MenuStyles.headerText}>Vender</Text>
                 </View>
                 <View style={MenuStyles.mainContainer}>
-                    <ScrollView style={styles.scrollContainer}>
-                        <View style={styles.scrollBody}>
-                            <Carousel
-                                ref={ref => this.carousel = ref}
-                                layout={'default'} 
-                                ref={ref => this.carousel = ref}
-                                data={[...this.state.photos, ...[{uri:"add"}]]}
-                                renderItem={this.renderItem}
-                                sliderWidth={screenWidth}
-                                itemWidth={200}
-                                onSnapToItem = { index => this.setState({activeIndex:index}) }
-                            />
-                            <Pagination
-                                dotsLength={this.state.photos.length+1}
-                                activeDotIndex={this.state.activeIndex}
-                                dotStyle={{
-                                    width: 10,
-                                    height: 10,
-                                    borderRadius: 5,
-                                    marginHorizontal: 8,
-                                    backgroundColor: 'gray'
-                                }}
-                                inactiveDotOpacity={0.4}
-                                inactiveDotScale={0.6}
-                            />
-                            <View style={[styles.pickerContainer, this.state.photos.length > 0? {marginTop:0}: {}]}>
-                                <Picker selectedValue={this.state.category}
-                                        onValueChange={(category) => this.setState({category})}
-                                        style={styles.picker}
-                                >
-                                    { 
-                                        this.categories.map((e, i) => {
-                                            return <Picker.Item label={e} value={e} key={i}/>
-                                        }) 
-                                    }
-                                </Picker>
-                            </View>
+                    <ScrollView style={MenuStyles.scrollContainer}>
+                        <TouchableWithoutFeedback onPress={this.cancelAll}>
+                            <View style={MenuStyles.scrollBody}>
+                                <Carousel
+                                    ref={ref => this.carousel = ref}
+                                    layout={'default'} 
+                                    ref={ref => this.carousel = ref}
+                                    data={[...this.state.photos, ...[{uri:"add"}]]}
+                                    renderItem={this.renderItem}
+                                    sliderWidth={screenWidth}
+                                    itemWidth={200}
+                                    onSnapToItem = { index => this.setState({activeIndex:index}) }
+                                />
+                                <Pagination
+                                    dotsLength={this.state.photos.length+1}
+                                    activeDotIndex={this.state.activeIndex}
+                                    dotStyle={{
+                                        width: 10,
+                                        height: 10,
+                                        borderRadius: 5,
+                                        marginHorizontal: 8,
+                                        backgroundColor: 'gray'
+                                    }}
+                                    inactiveDotOpacity={0.4}
+                                    inactiveDotScale={0.6}
+                                />
+                                <View style={[styles.pickerContainer, this.state.photos.length > 0? {marginTop:0}: {}]}>
+                                    <Picker selectedValue={this.state.category}
+                                            onValueChange={(category) => this.setState({category})}
+                                            style={styles.picker}
+                                    >
+                                        { 
+                                            this.categories.map((e, i) => {
+                                                return <Picker.Item label={e} value={e} key={i}/>
+                                            }) 
+                                        }
+                                    </Picker>
+                                </View>
 
-                            <TextInput onChangeText={(title) => this.setState({title})} 
-                               style={InputStyles.textInput} value={this.state.title}
-                               placeholder="Titulo"
-                            />
-                            <TextInput onChangeText={(price) => { if (!price.match(/[ |-]+/)) this.setState({price}) }} 
-                               style={InputStyles.textInput} value={this.state.price}
-                               placeholder="Precio"
-                               keyboardType="numeric"
-                            />
-                            <TextInput onChangeText={(description) => this.setState({description})} 
-                               style={InputStyles.textInput} value={this.state.description}
-                               multiline={true}
-                               placeholder="Descripción"
-                            />
-                            <TextInput onChangeText={(stock) => { if (!stock.match(/[ |-]+/)) this.setState({stock}) }} 
-                               style={InputStyles.textInput} value={this.state.stock}
-                               placeholder="Unidades"
-                               keyboardType="numeric"
-                            />
-                            <TouchableOpacity style={styles.sendBtn} onPress={this.storeData}>
-                                <Text style={styles.sendTxt}>Enviar</Text>
-                                <Icon name={"arrow-up"} size={25} color="#424b54" style={styles.icon} />
-                            </TouchableOpacity>
-                        </View>
+                                <TextInput onChangeText={(title) => this.setState({title})} 
+                                style={InputStyles.textInput} value={this.state.title}
+                                placeholder="Titulo"
+                                />
+                                <TextInput onChangeText={(price) => { if (!price.match(/[ |-]+/)) this.setState({price}) }} 
+                                style={InputStyles.textInput} value={this.state.price}
+                                placeholder="Precio"
+                                keyboardType="numeric"
+                                />
+                                <TextInput onChangeText={(description) => this.setState({description})} 
+                                style={InputStyles.textInput} value={this.state.description}
+                                multiline={true}
+                                placeholder="Descripción"
+                                />
+                                <TextInput onChangeText={(stock) => { if (!stock.match(/[ |-]+/)) this.setState({stock}) }} 
+                                style={InputStyles.textInput} value={this.state.stock}
+                                placeholder="Unidades"
+                                keyboardType="numeric"
+                                />
+                                <TouchableOpacity style={styles.sendBtn} onPress={this.storeData}>
+                                    <Text style={styles.sendTxt}>Enviar</Text>
+                                    <Icon name={"arrow-up"} size={25} color="#424b54" style={styles.icon} />
+                                </TouchableOpacity>
+                            </View>
+                        </TouchableWithoutFeedback>
                     </ScrollView>
                 </View>
                 <View style={MenuStyles.menu}/>

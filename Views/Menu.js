@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Store from './Store';
+import Cart from './Cart'; 
 import Sell from './Sell';
 import MyProducts from './MyProducts';
 import MyAccount from './MyAccount';
@@ -10,6 +12,12 @@ import { MenuStyles as Styles } from '../Styles/MenuStyles';
 const Tab = createBottomTabNavigator();
 
 class Menu extends Component {
+    constructor(props) {
+      super(props);
+      this.state = {}
+    }
+
+
     render() {
         const { email, user } = this.props.route.params
         return (
@@ -21,6 +29,9 @@ class Menu extends Component {
                   let iconName;
                   
                   if (route.name === 'Tienda') {
+                    iconName = focused ? 'storefront' : 'storefront-outline';
+                    return <Icon name={iconName} size={size} color={color} />;
+                  } else if (route.name === 'Carrito') {
                     iconName = focused ? 'cart' : 'cart-outline';
                   } else if (route.name === 'Vender') {
                     iconName = focused ? 'pricetags' : 'pricetags-outline';
@@ -46,6 +57,8 @@ class Menu extends Component {
             >
               {/* tab para comprar */}
               <Tab.Screen name="Tienda" children={() => <Store email={email} user={user}/>}/>
+              {/* tab para carrito */}
+              <Tab.Screen name="Carrito" children={() => <Cart email={email} user={user}/>}/>
               {/* tab para vender productos  */}
               <Tab.Screen name="Vender" children={() => <Sell email={email} user={user}/>}/>
               {/* tab para editar mis productos publicados */}

@@ -29,5 +29,13 @@ export const MenuStyles = StyleSheet.create({
     },
     menu:{
         height: 65,
-    }
+    },
+    scrollContainer: {
+        width: "100%",
+    },
+    scrollBody: {
+        paddingTop: 20,
+        alignItems: "center",
+        paddingBottom: 20,
+    },
 });

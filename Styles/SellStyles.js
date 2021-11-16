@@ -1,14 +1,6 @@
 import { StyleSheet } from 'react-native';
 
 export const SellStyles = StyleSheet.create({
-    scrollContainer: {
-        width: "100%",
-    },
-    scrollBody: {
-        paddingTop: 20,
-        alignItems: "center",
-        paddingBottom: 20,
-    },
     image: {
         width: 200, 
         height: 200,
