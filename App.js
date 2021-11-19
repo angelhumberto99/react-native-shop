@@ -21,7 +21,7 @@ class App extends Component {
   
   render() {
     return (
-      <NavigationContainer>
+      <NavigationContainer independent={true}>
         <Stack.Navigator 
           screenOptions={{
             headerShown: false
