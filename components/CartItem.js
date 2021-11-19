@@ -12,8 +12,9 @@ class CartItem extends Component {
                 <View>
                     <Text style={styles.title}>{this.props.product.name}</Text>
                     <Text style={styles.price}>$ {moneyFormatter(parseFloat(this.props.product.price))}</Text>
+                    <Text style={styles.price}>Unidades: {this.props.product.ammount}</Text>
                 </View>
-                <TouchableOpacity onPress={() => this.props.handleDelete(this.props.index)}>
+                <TouchableOpacity onPress={() => this.props.handleDelete(this.props.product.img_id)}>
                     <Icon name="circle-with-cross" color="#ed2143" size={20}/>
                 </TouchableOpacity>
             </View>

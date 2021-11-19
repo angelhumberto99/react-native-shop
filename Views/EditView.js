@@ -1,17 +1,26 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
+import { Text, View, TouchableOpacity, Image, ScrollView, Dimensions, TextInput } from 'react-native';
 import { ProductViewStyles as styles } from '../Styles/ProductViewStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
 import { moneyFormatter } from '../moneyFormatter';
+import { LoginStyle as InputStyles } from '../Styles/LoginStyle';
 
 const screenWidth = Dimensions.get('window').width * 0.85;
 
-class ProductView extends Component {
+class EditView extends Component {
     constructor(props) {
         super(props);
         this.state = {
             activeIndex: 0,
+            photos: [],
+            activeIndex: 0,
+            category: "Vehículos",
+            title: "",
+            price: "",
+            description: "",
+            stock: "",
+            serverUri: [],
         }
     }
 
@@ -28,7 +37,7 @@ class ProductView extends Component {
     }
 
     render() {
-        const { product, imgs, cartHandler, showData } = this.props.route.params;
+        const { product, imgs } = this.props.route.params;
         return (
             <View style={styles.background}>
                 <View style={styles.card}>
@@ -36,7 +45,7 @@ class ProductView extends Component {
                         <TouchableOpacity style={styles.backBtn} onPress={() => this.props.navigation.goBack()}> 
                             <Icon name="arrow-back-circle" size={35} color="#93a8ac"/>
                         </TouchableOpacity>
-                        <Text style={styles.title}>{product.name}</Text>
+                        <Text style={[styles.title, {fontSize: 20}]}>Editar</Text>
                     </View>
                     <ScrollView style={{padding: 10}}>
                         <View style={{alignItems: 'center'}}> 
@@ -63,36 +72,42 @@ class ProductView extends Component {
                                 inactiveDotScale={0.6}
                             />
                         </View>
-                        <View style={{alignItems: 'center', width: '100%', marginTop: 15}}>
-                            <View style={{width: '75%'}}>
-                                <Text style={styles.prodText}>Categoria: {product.category}</Text>
-                                <Text style={styles.prodText}>Precio: $ {moneyFormatter(parseFloat(product.price))}</Text>
-                                <Text style={styles.prodText}>Descripción: {product.description}</Text>
-                                {
-                                    showData&&
-                                    <Text style={styles.prodText}>Vendedor: {product.owner}</Text>
-                                }
-                            </View>
+                        <View style={{alignItems: 'center', marginTop: 15, marginBottom: 25}}>
+                            <TextInput onChangeText={(title) => this.setState({title})} 
+                            style={InputStyles.textInput} value={this.state.title}
+                            placeholder={product.name}
+                            />
+                            <TextInput onChangeText={(price) => { if (!price.match(/[ |-]+/)) this.setState({price}) }} 
+                            style={InputStyles.textInput} value={this.state.price}
+                            placeholder={"$ "+ moneyFormatter(parseFloat(product.price))}
+                            keyboardType="numeric"
+                            />
+                            <TextInput onChangeText={(description) => this.setState({description})} 
+                            style={InputStyles.textInput} value={this.state.description}
+                            multiline={true}
+                            placeholder={product.description}
+                            />
+                            <TextInput onChangeText={(stock) => { if (!stock.match(/[ |-]+/)) this.setState({stock}) }} 
+                            style={InputStyles.textInput} value={this.state.stock}
+                            placeholder={"stock: "+product.stock}
+                            keyboardType="numeric"
+                            />
                         </View>
                     </ScrollView>
-                    {
-                        showData&&
-                        <View style={styles.btnContainer}>
-                            <TouchableOpacity style={{width: "75%"}} onPress={() => {
-                                cartHandler(product);
-                                this.props.navigation.goBack();
-                            }}> 
+                    <View style={styles.btnContainer}>
+                        <TouchableOpacity style={{width: "75%"}} onPress={() => {
+                            this.props.navigation.goBack();
+                        }}> 
                             <View style={styles.btnAdd}>
-                                <Icon name="cart-outline" size={25} color="#424b54"/>
-                                <Text style={styles.btnTxt}> Añadir</Text>
+                                <Icon name="save-outline" size={20} color="#424b54"/>
+                                <Text style={styles.btnTxt}> Guardar cambios</Text>
                             </View>
-                            </TouchableOpacity>
-                        </View>
-                    }
+                        </TouchableOpacity>
+                    </View>
                 </View>
             </View>
         )
     }
 }
 
-export default ProductView;
+export default EditView;

@@ -85,7 +85,7 @@ export const ProductViewStyles = StyleSheet.create({
         elevation: 4,
     },
     prodText: {
-        textAlign: 'center',
+        textAlign: 'justify',
         margin: 5,
     }
 });

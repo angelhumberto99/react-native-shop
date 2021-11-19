@@ -9,6 +9,7 @@ import { SellStyles as styles } from '../Styles/SellStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Picker } from '@react-native-picker/picker';
 import { LoginStyle as InputStyles } from '../Styles/LoginStyle';
+import NetInfo from "@react-native-community/netinfo";
 
 const screenWidth = Dimensions.get('window').width;
 const maxImages = 6
@@ -193,7 +194,8 @@ class Sell extends Component {
             on_sale: 1,
             category: this.state.category,
             price: this.state.price,
-            imgs: this.state.serverUri
+            imgs: this.state.serverUri,
+            email: this.props.email
         };
         // Se hace la petición por el método POST
         fetch(url, {
@@ -210,62 +212,74 @@ class Sell extends Component {
                     "Ha existido un error al conectar con la base de datos, intente de nuevo",
                     [{text: "OK"}]
                     );
-                } else {
-                    Alert.alert(
-                        "Articulo publicado",
-                        "Su articulo ha sido publicado exitosamente",
-                        [{text: "OK"}]
-                        );
-                        this.setState({
-                            photos: [],
-                            activeIndex: 0,
-                            category: "Vehículos",
-                            title: "",
-                            price: "",
-                            description: "",
-                            stock: "",
-                        })
-                    }
+            } else {
+                Alert.alert(
+                    "Articulo publicado",
+                    "Su articulo ha sido publicado exitosamente",
+                    [{text: "OK"}]
+                );
+                this.setState({
+                    photos: [],
+                    activeIndex: 0,
+                    category: "Vehículos",
+                    title: "",
+                    price: "",
+                    description: "",
+                    stock: "",
+                })
+            }
                     
         }).catch(error => console.error('Error:', error));
     }
 
     storeData = () => {
-        // revisar que ningún campo esté vacio
-        var emptyField = false;
-        Object.keys(this.state).map((e) => {
-            if (e == 'photos') {
-                if (this.state[e].length === 0){
-                    emptyField = true;
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {    
+                // revisar que ningún campo esté vacio
+                var emptyField = false;
+                Object.keys(this.state).map((e) => {
+                    if (e == 'photos') {
+                        if (this.state[e].length === 0){
+                            emptyField = true;
+                        }
+                    } else if (e != 'activeIndex') {
+                        if (this.state[e] === "") {
+                            emptyField = true;
+                        }
+                    }
+                });
+
+                var { price, stock } = this.state
+
+                if (Number.parseFloat(price) <= 0 || Number.parseFloat(stock) <= 0) {
+                    Alert.alert(
+                        "Valores iguales a cero",
+                        "Ninguno de los campos numericos puede ser igual a cero, verifique su información",
+                        [{text: "OK"}]
+                    );
                 }
-            } else if (e != 'activeIndex') {
-                if (this.state[e] === "") {
-                    emptyField = true;
+
+                if (!emptyField) {
+                    this.state.photos.map(e => {
+                        this.uploadImageToServer(e.uri);
+                    }); 
+                } else {
+                    Alert.alert(
+                        "Campos vacios",
+                        "Alguno de los campos no ha sido llenado correctamente, verifique su información",
+                        [{text: "OK"}]
+                    );
                 }
+
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
             }
         });
-
-        var { price, stock } = this.state
-
-        if (Number.parseFloat(price) <= 0 || Number.parseFloat(stock) <= 0) {
-            Alert.alert(
-                "Valores iguales a cero",
-                "Ninguno de los campos numericos puede ser igual a cero, verifique su información",
-                [{text: "OK"}]
-            );
-        }
-
-        if (!emptyField) {
-            this.state.photos.map(e => {
-                this.uploadImageToServer(e.uri);
-            }); 
-        } else {
-            Alert.alert(
-                "Campos vacios",
-                "Alguno de los campos no ha sido llenado correctamente, verifique su información",
-                [{text: "OK"}]
-            );
-        }
+        
     }
 
     cancelAll = () => {

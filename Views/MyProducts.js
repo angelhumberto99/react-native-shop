@@ -15,16 +15,23 @@ class MyProducts extends Component {
                     <View style={MenuStyles.header}>
                         <Text style={MenuStyles.headerText}>Mis Productos</Text>
                     </View>
-                    <Tab.Navigator initialRouteName="OnSale"
+                    <Tab.Navigator 
                         screenOptions={{
-                            tabBarActiveTintColor: '#2C2B2E',
-                            tabBarInactiveTintColor: 'gray',
-                            tabBarLabelStyle: { fontSize: 12 },
-                            tabBarStyle: { backgroundColor: '#93a8ac' },
-                    }}>
-                        <Tab.Screen name="OnSale" component={OnSell} />
-                        <Tab.Screen name="Bought" component={Bought} />
+                            tabBarActiveTintColor: 'black',
+                            tabBarInactiveTintColor: '#3b4652',
+                            tabBarLabelStyle: { fontSize: 10, marginBottom: 10, fontStyle: 'italic'},
+                            tabBarStyle: { 
+                                height: 40,
+                                backgroundColor: '#93a8ac',
+                            },
+                        }}
+                    >
+                        <Tab.Screen name="En Venta" children={() => <OnSell email={this.props.email} 
+                            navigation={this.props.navigation}/>} />
+                        <Tab.Screen name="Comprado" children={() => <Bought email={this.props.email} 
+                            navigation={this.props.navigation}/>} />
                     </Tab.Navigator>
+                    <View style={[MenuStyles.menu, {backgroundColor: '#ced7d9'}]}/>
             </NavigationContainer>
         )
     }

@@ -139,6 +139,5 @@ export const ProductCardStyles = StyleSheet.create({
     ammount: {
         fontSize: 15,
         fontStyle: 'italic',
-
     }
 })

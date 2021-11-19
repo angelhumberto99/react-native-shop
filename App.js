@@ -5,6 +5,7 @@ import Login from './Views/Login';
 import SignUp from './Views/SignUp';
 import Menu from './Views/Menu';
 import ProductView from './Views/ProductView';
+import EditView from './Views/EditView';
 import { LogBox } from 'react-native';
 
 LogBox.ignoreLogs([
@@ -31,6 +32,7 @@ class App extends Component {
           <Stack.Screen name="Sign Up" component={SignUp}/>
           <Stack.Screen name="Menu" component={Menu}/>
           <Stack.Screen name="ProductView" component={ProductView}/>
+          <Stack.Screen name="EditView" component={EditView}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

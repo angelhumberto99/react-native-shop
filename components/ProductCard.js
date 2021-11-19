@@ -18,6 +18,7 @@ class ProductCard extends Component {
                     this.props.navigation.navigate("ProductView", {
                         product:this.props.product,
                         imgs: res,
+                        showData: true,
                         cartHandler: this.props.cartHandler,
                     })
                 });

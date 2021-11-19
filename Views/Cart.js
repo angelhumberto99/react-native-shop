@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, TouchableOpacity, RefreshControl } from 'react-native';
+import { Text, View, ScrollView, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import CartItem from '../components/CartItem';
 import { ProductCardStyles as styles } from '../Styles/ProductCardStyles';
@@ -11,7 +11,9 @@ class Cart extends Component {
         super(props);
         this.state = {
             products: [],
+            filtered: [],
             refreshing: false,
+            purchaised: [],
         }
     }
 
@@ -20,11 +22,24 @@ class Cart extends Component {
     }
 
     loadData = async () => {
+        this.getPurchaisedData()
         try {
             const jsonData = await AsyncStorage.getItem('@cart')
             if (jsonData !== null) {
-                const data = JSON.parse(jsonData)
-                this.setState({products: data, refreshing: false})
+                var data = JSON.parse(jsonData)
+                console.log("data: ",data)
+                var unique = {}
+                data.forEach((x) => { unique[x.img_id] = (unique[x.img_id] || 0) + 1; });
+                console.log("unique: ",unique)
+                var filtered = []
+                for (const item in unique) {
+                    var found = data.find(e => e.img_id === item);
+                    found['ammount'] = unique[item];
+                    filtered.push(found); 
+                } 
+                console.log("filtered: ",filtered)
+            
+                this.setState({products: data, filtered, refreshing: false})
             }
         } catch(e) {
             console.log(e)
@@ -47,11 +62,16 @@ class Cart extends Component {
         this.loadData();
     }
 
-    handleDelete = (index) => {
-        var list = this.state.products.filter((e, i) => {
-            return i != index
+    handleDelete = (img_id) => {
+        var list = this.state.products.filter((e) => {
+            return e.img_id != img_id;
         })
-        this.setState({products: list}, () => this.storeData());
+
+        var filter = this.state.filtered.filter((e) => {
+            return e.img_id != img_id;
+        })
+
+        this.setState({products: list, filtered: filter}, () => this.storeData());
     }
 
     getTotal = () => {
@@ -63,9 +83,77 @@ class Cart extends Component {
         return result 
     }
 
+    fetchData = (article) => {
+        // URL del servidor
+        var url = 'https://angelgutierrezweb.000webhostapp.com/sell_article.php';
+        // Datos que se guardarán en la base de datos
+        var data = {
+            name: article.name,
+            stock: article.stock,
+            img_id: article.img_id,
+            description: article.description,
+            owner: this.props.user,
+            on_sale: 0,
+            category: article.category,
+            price: article.price,
+            imgs: article.serverUri,
+            email: this.props.email
+        };
+        // Se hace la petición por el método POST
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json, text/plain, */*'
+            }
+        }).then(res => res.text()
+         ).then(response => {
+            if (response === '0') {
+                Alert.alert(
+                    "Error de conexión",
+                    "Ha existido un error al conectar con la base de datos, intente de nuevo",
+                    [{text: "OK"}]
+                );
+            }
+                    
+        }).catch(error => console.error('Error:', error));
+    }
+
+    getPurchaisedData = () => {
+        // llamada a la base de datos
+        fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=0`)
+        .then((res) => res.json())
+        .catch((err) => console.log(err))
+        .then((res) => {
+            this.setState({purchaised: res});
+        })
+    }
+
     endPurchase = () => {
-        console.log(this.state.products)
-        this.setState({products: []}, () => this.storeData());
+        Alert.alert(
+            "Confirmación",
+            "Se requiere de su confirmación para finalizar su compra",
+            [
+                { text: "Cancelar" },
+                { text: "Aceptar", onPress: () => {
+                    this.state.filtered.map((prod) => {
+                        var found = undefined;
+                        found = this.state.purchaised.find(e => e.img_id === prod.img_id);
+                        if (found === undefined) {
+                            this.fetchData(prod);
+                        }
+                    })
+                    this.setState({products: [], filtered: []}, () => {
+                        this.storeData()
+                        Alert.alert(
+                            "Compra exitosa",
+                            "Su compra se ha realizado correctamente",
+                            [{text: "OK"}]
+                        );
+                    });
+                }}
+            ]
+        );
     }
     
     render() {
@@ -76,7 +164,7 @@ class Cart extends Component {
                 </View>
                 <View style={MenuStyles.mainContainer}>
                     <FlatList
-                        data={this.state.products}
+                        data={this.state.filtered}
                         style={styles.listContainer}
                         refreshControl={<RefreshControl
                             refreshing={this.state.refreshing}
