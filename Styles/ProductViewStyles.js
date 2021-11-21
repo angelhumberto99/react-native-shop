@@ -87,5 +87,17 @@ export const ProductViewStyles = StyleSheet.create({
     prodText: {
         textAlign: 'justify',
         margin: 5,
-    }
+    },
+    del: {
+        width: 25,
+        height: 25,
+        backgroundColor: 'red',
+        borderRadius: 25,
+        paddingTop: 2,
+        paddingLeft: 1,
+        alignItems: 'center',
+        position: 'absolute',
+        top: 5,
+        right: 5,
+    },
 });
