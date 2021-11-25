@@ -91,9 +91,6 @@ class Store extends Component {
             if (e.img_id === product.img_id) {
                 console.log(e.stock)
                 e.stock = (e.stock) - 1;
-                if (e.stock === 0) {
-                    e["runOut"] = true;
-                }
             }
             return e;
         });

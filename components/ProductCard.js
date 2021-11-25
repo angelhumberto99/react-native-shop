@@ -41,7 +41,7 @@ class ProductCard extends Component {
                         <Text style={styles.title}>{this.props.product.name}</Text>
                         <Text style={styles.price}>$ {moneyFormatter(parseFloat(this.props.product.price))}</Text>
                         {
-                            this.props.product?.runOut ?
+                            this.props.product.stock <= 0 ?
                             <TouchableOpacity onPress={() => {
                                 Alert.alert(
                                     "Sin Stock",

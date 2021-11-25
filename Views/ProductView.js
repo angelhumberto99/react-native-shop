@@ -76,7 +76,7 @@ class ProductView extends Component {
                         </View>
                     </ScrollView>
                     {
-                        showData && product?.runOut ? 
+                        showData && product.stock <= 0 ? 
                         <View style={styles.btnContainer}>
                             <TouchableOpacity style={{width: "75%"}} onPress={() => {
                                 Alert.alert(
