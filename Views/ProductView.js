@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Image, ScrollView, Dimensions } from 'react-native';
+import { Text, View, TouchableOpacity, Image, ScrollView, Dimensions, Alert } from 'react-native';
 import { ProductViewStyles as styles } from '../Styles/ProductViewStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
@@ -64,7 +64,7 @@ class ProductView extends Component {
                             />
                         </View>
                         <View style={{alignItems: 'center', width: '100%', marginTop: 15}}>
-                            <View style={{width: '75%'}}>
+                            <View style={{width: '75%', marginBottom: 40}}>
                                 <Text style={styles.prodText}>Categoria: {product.category}</Text>
                                 <Text style={styles.prodText}>Precio: $ {moneyFormatter(parseFloat(product.price))}</Text>
                                 <Text style={styles.prodText}>Descripción: {product.description}</Text>
@@ -76,7 +76,22 @@ class ProductView extends Component {
                         </View>
                     </ScrollView>
                     {
-                        showData&&
+                        showData && product?.runOut ? 
+                        <View style={styles.btnContainer}>
+                            <TouchableOpacity style={{width: "75%"}} onPress={() => {
+                                Alert.alert(
+                                    "Sin Stock",
+                                    "El producto no se encuentra disponible de momento",
+                                    [{text: "OK", onPress: () => this.props.navigation.goBack()}]
+                                )
+                            }}> 
+                            <View style={[styles.btnAdd, {backgroundColor: '#ed2143'}]}>
+                                <Icon name="cart-outline" size={25} color="#424b54"/>
+                                <Text style={styles.btnTxt}> Sin Stock</Text>
+                            </View>
+                            </TouchableOpacity>
+                        </View>
+                        :
                         <View style={styles.btnContainer}>
                             <TouchableOpacity style={{width: "75%"}} onPress={() => {
                                 cartHandler(product);

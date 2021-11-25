@@ -89,7 +89,7 @@ class Cart extends Component {
         // Datos que se guardarán en la base de datos
         var data = {
             name: article.name,
-            stock: article.stock,
+            stock: article.ammount,
             img_id: article.img_id,
             description: article.description,
             owner: this.props.user,
@@ -129,6 +129,11 @@ class Cart extends Component {
         })
     }
 
+    updateStock = (prod) => {
+        fetch(`https://angelgutierrezweb.000webhostapp.com/updateStock.php?stock=${prod.ammount}&img_id=${prod.img_id}`)
+        .catch((err) => console.error(err));
+    }
+
     endPurchase = () => {
         Alert.alert(
             "Confirmación",
@@ -142,6 +147,7 @@ class Cart extends Component {
                         if (found === undefined) {
                             this.fetchData(prod);
                         }
+                        this.updateStock(prod);
                     })
                     this.setState({products: [], filtered: []}, () => {
                         this.storeData()

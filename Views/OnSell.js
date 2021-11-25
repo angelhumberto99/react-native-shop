@@ -74,6 +74,7 @@ class OnSell extends Component {
         // Se revisa la conexión para realizar la llamada al servidor
         NetInfo.fetch("wifi").then(state => {
             if (state.isConnected) {
+                console.log("item.img_id: ", item.img_id)
                 fetch(`https://angelgutierrezweb.000webhostapp.com/get_imgs.php?img_id=${item.img_id}`)
                 .then((res => res.json()))
                 .catch((e) => console.log(e))

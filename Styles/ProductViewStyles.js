@@ -85,7 +85,7 @@ export const ProductViewStyles = StyleSheet.create({
         elevation: 4,
     },
     prodText: {
-        textAlign: 'justify',
+        textAlign: 'left',
         margin: 5,
     },
     del: {

@@ -28,6 +28,7 @@ class EditView extends Component {
             description: "",
             stock: "",
             serverUri: [],
+            imgEdited: false,
         }
     }
 
@@ -56,6 +57,56 @@ class EditView extends Component {
         "Inmuebles",
     ]
 
+    uploadImageToServer = async (imageUri) => {
+        const response = await fetch(imageUri);
+        const blob = await response.blob();
+        var reader = new FileReader();
+        reader.onload = () => {
+            var InsertAPI = 'https://angelgutierrezweb.000webhostapp.com/upload.php'
+            var Data={img:reader.result};
+            var headers={
+                'Accept':'application/json',
+                'Content-Type':'application.json'
+            }
+            fetch(InsertAPI,{
+                method:'POST',
+                headers:headers,
+                body:JSON.stringify(Data),
+            }).then((response)=>response.json()).then((response)=>{
+                this.setState({serverUri: [...this.state.serverUri, "https://angelgutierrezweb.000webhostapp.com/"+response]})
+            }).then(() => {
+                if (this.state.serverUri.length == this.state.photos.length) {
+                    this.updateImgs();
+                }
+            }).catch(err=>{
+                console.log(err);
+            })
+        }
+        reader.readAsDataURL(blob);
+    }
+
+    updateImgs = () => {
+        console.log("server uri: ", this.state.serverUri);
+        // URL del servidor
+        var url = 'https://angelgutierrezweb.000webhostapp.com/updateImgs.php';
+        // Datos que se guardarán en la base de datos
+        var data = {
+            img_id_new: this.state.serverUri[0],
+            img_id_old: this.props.route.params.product.img_id,
+            imgs: this.state.serverUri,
+        };
+        console.log(data);
+        // Se hace la petición por el método POST
+        fetch(url, {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers:{
+                'Content-Type': 'application/json, text/plain, */*'
+            }
+        }).catch(error => console.error('Error:', error));
+        this.props.navigation.goBack();
+    }
+
     editData = () => {
         const { product } = this.props.route.params;
         var { category, title, price, description, stock } = this.state
@@ -70,6 +121,7 @@ class EditView extends Component {
         .then((res) => {
             console.log("res: ", res)
             if (res == '1') {
+                this.editImages();
                 Alert.alert(
                     "Edición realizada",
                     "Su articulo ha sido actualizado",
@@ -77,7 +129,6 @@ class EditView extends Component {
                       { text: "ok" },
                     ],
                 );
-                this.props.navigation.goBack();
             } else {
                 Alert.alert(
                     "Error",
@@ -88,6 +139,25 @@ class EditView extends Component {
                 );
             }
         })
+    }
+
+    editImages = () => {
+        var count = 0;
+        if (this.state.imgEdited) {
+            this.state.photos.map(e => {
+                if (!e.uri.includes("https://angelgutierrezweb.000webhostapp.com/")) {
+                    count++;
+                    this.uploadImageToServer(e.uri);
+                } else {
+                    this.setState({serverUri: [...this.state.serverUri, e.uri]});
+                }
+            });
+            if (count == 0) {
+                this.updateImgs();
+            }
+        } else {
+            this.props.navigation.goBack();
+        }
     }
 
     renderItem = ({item}) => {
@@ -165,7 +235,7 @@ class EditView extends Component {
                         return
                     }
                     console.log("uris: ", uris)
-                    this.setState({photos: [...oldData, ...uris]});
+                    this.setState({photos: [...oldData, ...uris], imgEdited: true});
                 }
             },
         )
@@ -200,7 +270,7 @@ class EditView extends Component {
                         var list = this.state.photos.filter(x => {
                             return x.uri != item.uri;
                         })
-                        this.setState({photos: list})
+                        this.setState({photos: list, imgEdited: true});
                     }
                 }
             ],

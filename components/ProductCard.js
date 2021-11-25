@@ -40,12 +40,28 @@ class ProductCard extends Component {
                     <View style={styles.infoContainer}>
                         <Text style={styles.title}>{this.props.product.name}</Text>
                         <Text style={styles.price}>$ {moneyFormatter(parseFloat(this.props.product.price))}</Text>
-                        <TouchableOpacity onPress={() => this.props.cartHandler(this.props.product)} style={styles.btn}>
-                            <View style={styles.btnElements}>
-                                <Icon name={"cart-outline"} size={15}/>
-                                <Text> Añadir</Text>
-                            </View>
-                        </TouchableOpacity>
+                        {
+                            this.props.product?.runOut ?
+                            <TouchableOpacity onPress={() => {
+                                Alert.alert(
+                                    "Sin Stock",
+                                    "El producto no se encuentra disponible de momento",
+                                    [{text: "OK"}]
+                                )
+                                }} style={[styles.btn, {backgroundColor: '#ed2143'}]}>
+                                <View style={styles.btnElements}>
+                                    <Icon name={"cart-outline"} size={15}/>
+                                    <Text> Sin Stock</Text>
+                                </View>
+                            </TouchableOpacity>
+                            :
+                            <TouchableOpacity onPress={() => this.props.cartHandler(this.props.product)} style={styles.btn}>
+                                <View style={styles.btnElements}>
+                                    <Icon name={"cart-outline"} size={15}/>
+                                    <Text> Añadir</Text>
+                                </View>
+                            </TouchableOpacity>
+                        }
                     </View>
                 </View>
             </TouchableOpacity>

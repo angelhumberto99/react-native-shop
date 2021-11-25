@@ -86,7 +86,7 @@ class Bought extends Component {
                     />
                 {
                     this.state.data.length === 0 &&
-                    <Text style={styles.empty}>No hay productos a la venta</Text>
+                    <Text style={styles.empty}>No has comprado productos aún</Text>
                 }
                 </View>
             </View>
