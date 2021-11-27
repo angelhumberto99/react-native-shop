@@ -27,4 +27,27 @@ export const MyAccountStyles = StyleSheet.create({
         marginTop: 5,
         fontStyle: 'italic',
     },
+    title: {
+        fontStyle: 'italic',
+        fontSize: 18,
+        marginBottom: 5,
+    },
+    infoContainer: {
+        marginTop: '15%',
+    },
+    txt: {
+        paddingLeft: 15,
+    },
+    changePass: {
+        marginTop: 20,
+        backgroundColor: '#80bfa1',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 30,
+        borderRadius: 15,
+    },
+    btnTitle: {
+        fontWeight: 'bold',
+        fontStyle: 'italic',
+    }
 });

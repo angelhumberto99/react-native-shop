@@ -31,6 +31,13 @@ class MyAccount extends Component {
         
     }
 
+    updatePass = () => {
+        this.props.navigation.navigate("PasswordEdit", { 
+            navigation: this.props.navigation,
+            email: this.props.email,
+        });
+    }
+
     render() {
         return (
             <View style={MenuStyles.pageContainer}>
@@ -38,8 +45,14 @@ class MyAccount extends Component {
                     <Text style={MenuStyles.headerText}>Mi Cuenta</Text>
                 </View>
                 <View style={MenuStyles.mainContainer}>
-                    <Text> {this.props.user} </Text>
-                    <Text> {this.props.email} </Text>
+                    <View style={Styles.infoContainer}>   
+                        <Text style={Styles.title}> Información del usuario </Text>
+                        <Text style={Styles.txt}> Nombre: {this.props.user} </Text>
+                        <Text style={Styles.txt}> Correo: {this.props.email} </Text>
+                        <TouchableOpacity style={Styles.changePass} onPress={this.updatePass}>
+                            <Text style={Styles.btnTitle}>Cambiar contraseña</Text>
+                        </TouchableOpacity>
+                    </View> 
                     <View style={Styles.logOutContainer}>
                         <TouchableOpacity style={Styles.logOutBtn} onPress={this.logOut}>
                             <Icon name="log-out-outline" size={25} color="#cccccc"/>

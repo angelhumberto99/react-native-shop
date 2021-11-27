@@ -139,5 +139,27 @@ export const ProductCardStyles = StyleSheet.create({
     ammount: {
         fontSize: 15,
         fontStyle: 'italic',
-    }
+    },
+    pickerContainer:{
+        width: '90%',
+        height: 40,
+        borderRadius: 30,
+        overflow: 'hidden',
+        marginTop: 10,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    picker: {
+        width: '50%',
+        backgroundColor: '#93a8ac',
+        color: '#424b54',
+    },
+    textInput: {
+        width: '80%',
+        fontSize: 17,
+        height: 40,
+        color: '#424b54',
+        borderBottomColor: '#93a8ac',
+        borderBottomWidth: 1,
+    },
 })

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, RefreshControl, Alert } from 'react-native';
+import { Text, View, ScrollView, FlatList, RefreshControl, Alert, TextInput, TouchableOpacity } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import ProductCard from '../components/ProductCard';
 import { ProductCardStyles as styles } from '../Styles/ProductCardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NetInfo from "@react-native-community/netinfo";
 import FlashMessage, { showMessage } from "react-native-flash-message";
+import { Picker } from '@react-native-picker/picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 class Store extends Component {
     constructor(props) {
@@ -14,8 +16,33 @@ class Store extends Component {
             products: [],
             refreshing: false,
             cart: [],
+            category: "Todo",
+            prodName: "",
+            filter: "Mayor a menor precio",
         }
     }
+
+    filters = [
+        "Menor a mayor precio",
+        "Mayor a menor precio",
+    ]
+
+    categories = [
+        "Todo",
+        "Vehículos",
+        "Tecnología",
+        "Electrodomésticos",
+        "Hogar y muebles",
+        "Moda",
+        "Deportes",
+        "Herramientas",
+        "Construcción",
+        "Oficina",
+        "Juegos y Juguetes",
+        "Salud y Equipamiento Médico",
+        "Belleza y Cuidado Personal",
+        "Inmuebles",
+    ]
 
     componentDidMount() {
         this.getProducts();
@@ -29,7 +56,7 @@ class Store extends Component {
                 .then(res => res.json())
                 .catch(error => console.error('Error:', error))
                 .then(response => {
-                    this.setState({products: response})
+                    this.setState({products: response, category: "Todo", filter: "Mayor a menor precio"})
                 });
             } else {
                 Alert.alert(
@@ -102,7 +129,58 @@ class Store extends Component {
     refresh = () => {
         this.setState({refreshing: true});
         this.getProducts();
-        this.setState({refreshing: false});
+        this.setState({refreshing: false,
+                       category: this.categories[0],
+                       filter: this.filters[1], 
+                       prodName: ""});
+    }
+
+    filterData = () => {
+        var filter = this.state.filter === this.filters[0]? 0:1;
+
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                fetch(`https://angelgutierrezweb.000webhostapp.com/get_filterData.php?filter=${filter}&category=${this.state.category}`)
+                .then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    this.setState({products: response})
+                })
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        });
+
+        this.setState({prodName: ""})
+    }
+
+    searchData = () => {
+        if (this.state.prodName === "") {
+            this.getProducts();
+        } else {
+            // Se revisa la conexión para realizar la llamada al servidor
+            NetInfo.fetch("wifi").then(state => {
+                if (state.isConnected) {
+                    fetch(`https://angelgutierrezweb.000webhostapp.com/searchProduct.php?name=${this.state.prodName}`)
+                    .then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        this.setState({products: response, category: this.categories[0], filter: this.filters[1]})
+                    })
+                } else {
+                    Alert.alert(
+                        "Fallo de conexión",
+                        "Verifique que su dispositivo cuente con una conexión a internet estable",
+                        [{text: "OK"}]
+                    ); 
+                }
+            });
+        }
     }
 
     render() {
@@ -112,6 +190,41 @@ class Store extends Component {
                     <Text style={MenuStyles.headerText}>Tienda</Text>
                 </View>
                 <View style={MenuStyles.mainContainer}>
+                    <View style={{flexDirection: 'row', alignItems: 'baseline', marginTop: 5,}}> 
+                        <TextInput onChangeText={(prodName) => this.setState({prodName})} 
+                                style={styles.textInput} value={this.state.prodName}
+                                placeholder="Buscar"
+                                />
+                        <TouchableOpacity onPress={this.searchData}>
+                            <Icon name="search-circle" size={40} color="#424b54" />
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.pickerContainer}>
+                        <Picker selectedValue={this.state.category}
+                                onValueChange={(category) => {
+                                    this.setState({category}, () => this.filterData())
+                                }}
+                                style={styles.picker}
+                        >
+                            { 
+                                this.categories.map((e, i) => {
+                                    return <Picker.Item label={e} value={e} key={i}/>
+                                }) 
+                            }
+                        </Picker>
+                        <Picker selectedValue={this.state.filter}
+                                onValueChange={(filter) => {
+                                    this.setState({filter}, () => this.filterData())
+                                }}
+                                style={styles.picker}
+                        >
+                            { 
+                                this.filters.map((e, i) => {
+                                    return <Picker.Item label={e} value={e} key={i}/>
+                                }) 
+                            }
+                        </Picker>
+                    </View>
                     <FlatList
                         data={[...this.state.products, {name: "last"}]}
                         style={styles.listContainer}
@@ -129,6 +242,10 @@ class Store extends Component {
                         }}
                         numColumns={2}
                     />
+                    {
+                        this.state.products.length === 0 &&
+                        <Text style={styles.emptyCart}>No hay productos disponibles por el momento</Text>
+                    }
                 </View>
                 <FlashMessage position={{top: 50}}/>
                 <View style={MenuStyles.menu}/>
