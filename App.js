@@ -8,6 +8,7 @@ import ProductView from './Views/ProductView';
 import EditView from './Views/EditView';
 import { LogBox } from 'react-native';
 import PasswordEdit from './Views/PasswordEdit';
+import EndPurchase from './Views/EndPurchase';
 
 LogBox.ignoreLogs([
   'Non-serializable values were found in the navigation state',
@@ -35,6 +36,7 @@ class App extends Component {
           <Stack.Screen name="ProductView" component={ProductView}/>
           <Stack.Screen name="EditView" component={EditView}/>
           <Stack.Screen name="PasswordEdit" component={PasswordEdit}/>
+          <Stack.Screen name="EndPurchase" component={EndPurchase}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

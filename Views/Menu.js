@@ -58,7 +58,7 @@ class Menu extends Component {
               {/* tab para comprar */}
               <Tab.Screen name="Tienda" children={() => <Store email={email} user={user} navigation={this.props.navigation}/>}/>
               {/* tab para carrito */}
-              <Tab.Screen name="Carrito" children={() => <Cart email={email} user={user}/>}/>
+              <Tab.Screen name="Carrito" children={() => <Cart email={email} user={user} navigation={this.props.navigation}/>}/>
               {/* tab para vender productos  */}
               <Tab.Screen name="Vender" children={() => <Sell email={email} user={user}/>}/>
               {/* tab para editar mis productos publicados */}

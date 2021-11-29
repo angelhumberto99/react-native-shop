@@ -134,32 +134,25 @@ class Cart extends Component {
         .catch((err) => console.error(err));
     }
 
+    handleFinish = () => {
+        this.state.filtered.map((prod) => {
+            var found = undefined;
+            found = this.state.purchaised.find(e => e.img_id === prod.img_id);
+            if (found === undefined) {
+                this.fetchData(prod);
+            }
+            this.updateStock(prod);
+        })
+        this.setState({products: [], filtered: []}, () => this.storeData());
+    }
+
     endPurchase = () => {
-        Alert.alert(
-            "Confirmación",
-            "Se requiere de su confirmación para finalizar su compra",
-            [
-                { text: "Cancelar" },
-                { text: "Aceptar", onPress: () => {
-                    this.state.filtered.map((prod) => {
-                        var found = undefined;
-                        found = this.state.purchaised.find(e => e.img_id === prod.img_id);
-                        if (found === undefined) {
-                            this.fetchData(prod);
-                        }
-                        this.updateStock(prod);
-                    })
-                    this.setState({products: [], filtered: []}, () => {
-                        this.storeData()
-                        Alert.alert(
-                            "Compra exitosa",
-                            "Su compra se ha realizado correctamente",
-                            [{text: "OK"}]
-                        );
-                    });
-                }}
-            ]
-        );
+        const total = this.getTotal()
+        this.props.navigation.navigate("EndPurchase", {
+            total,
+            navigation: this.props.navigation,
+            handleFinish: this.handleFinish
+        })
     }
     
     render() {
