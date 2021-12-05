@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Text, View, Button, Image,ScrollView, 
-         TouchableOpacity, Alert, TouchableWithoutFeedback, 
-         Dimensions, ImageBackground, TextInput } from 'react-native';
+import { Text, View, Button,
+         Image, ScrollView, TouchableOpacity,
+         Alert, TouchableWithoutFeedback, Dimensions,
+         TextInput } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import { launchImageLibrary } from 'react-native-image-picker';
 import Carousel, { Pagination } from 'react-native-snap-carousel';

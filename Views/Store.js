@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, RefreshControl, Alert, TextInput, TouchableOpacity } from 'react-native';
+import { Text, View, ScrollView,
+         FlatList, RefreshControl, Alert,
+         TextInput, TouchableOpacity } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import ProductCard from '../components/ProductCard';
 import { ProductCardStyles as styles } from '../Styles/ProductCardStyles';
@@ -109,6 +111,22 @@ class Store extends Component {
         }
     }
 
+    editStock = (product) => {
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                fetch(`https://angelgutierrezweb.000webhostapp.com/updateStock.php?stock=1&img_id=${product.img_id}&add=1`)
+                .catch((err) => console.error(err));
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        });
+    }
+
     cartHandler = (product) => {
         showMessage({
             message: "Su producto lo espera en el carrito",
@@ -116,8 +134,8 @@ class Store extends Component {
         });
         var prods = this.state.products.map((e) => {
             if (e.img_id === product.img_id) {
-                console.log(e.stock)
                 e.stock = (e.stock) - 1;
+                this.editStock(product)
             }
             return e;
         });

@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList, TouchableOpacity, RefreshControl, Alert } from 'react-native';
+import { Text, View, ScrollView,
+         FlatList, TouchableOpacity, RefreshControl,
+         Alert } from 'react-native';
 import { MenuStyles } from '../Styles/MenuStyles';
 import CartItem from '../components/CartItem';
 import { ProductCardStyles as styles } from '../Styles/ProductCardStyles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { moneyFormatter } from '../moneyFormatter';
+import NetInfo from "@react-native-community/netinfo";
 
 class Cart extends Component {
     constructor(props) {
@@ -27,18 +30,14 @@ class Cart extends Component {
             const jsonData = await AsyncStorage.getItem('@cart')
             if (jsonData !== null) {
                 var data = JSON.parse(jsonData)
-                console.log("data: ",data)
                 var unique = {}
                 data.forEach((x) => { unique[x.img_id] = (unique[x.img_id] || 0) + 1; });
-                console.log("unique: ",unique)
                 var filtered = []
                 for (const item in unique) {
                     var found = data.find(e => e.img_id === item);
                     found['ammount'] = unique[item];
                     filtered.push(found); 
                 } 
-                console.log("filtered: ",filtered)
-            
                 this.setState({products: data, filtered, refreshing: false})
             }
         } catch(e) {
@@ -68,6 +67,9 @@ class Cart extends Component {
         })
 
         var filter = this.state.filtered.filter((e) => {
+            if (e.img_id == img_id) {
+                this.updateStock(e)
+            }
             return e.img_id != img_id;
         })
 
@@ -84,54 +86,87 @@ class Cart extends Component {
     }
 
     fetchData = (article) => {
-        // URL del servidor
-        var url = 'https://angelgutierrezweb.000webhostapp.com/sell_article.php';
-        // Datos que se guardarán en la base de datos
-        var data = {
-            name: article.name,
-            stock: article.ammount,
-            img_id: article.img_id,
-            description: article.description,
-            owner: this.props.user,
-            on_sale: 0,
-            category: article.category,
-            price: article.price,
-            imgs: article.serverUri,
-            email: this.props.email
-        };
-        // Se hace la petición por el método POST
-        fetch(url, {
-            method: 'POST',
-            body: JSON.stringify(data),
-            headers:{
-                'Content-Type': 'application/json, text/plain, */*'
-            }
-        }).then(res => res.text()
-         ).then(response => {
-            if (response === '0') {
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                // URL del servidor
+                var url = 'https://angelgutierrezweb.000webhostapp.com/sell_article.php';
+                // Datos que se guardarán en la base de datos
+                var data = {
+                    name: article.name,
+                    stock: article.ammount,
+                    img_id: article.img_id,
+                    description: article.description,
+                    owner: this.props.user,
+                    on_sale: 0,
+                    category: article.category,
+                    price: article.price,
+                    imgs: article.serverUri,
+                    email: this.props.email
+                };
+                // Se hace la petición por el método POST
+                fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers:{
+                        'Content-Type': 'application/json, text/plain, */*'
+                    }
+                }).then(res => res.text()
+                ).then(response => {
+                    if (response === '0') {
+                        Alert.alert(
+                            "Error de conexión",
+                            "Ha existido un error al conectar con la base de datos, intente de nuevo",
+                            [{text: "OK"}]
+                        );
+                    }
+                            
+                }).catch(error => console.error('Error:', error));
+            } else {
                 Alert.alert(
-                    "Error de conexión",
-                    "Ha existido un error al conectar con la base de datos, intente de nuevo",
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
                     [{text: "OK"}]
-                );
+                ); 
             }
-                    
-        }).catch(error => console.error('Error:', error));
+        });
     }
 
     getPurchaisedData = () => {
-        // llamada a la base de datos
-        fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=0`)
-        .then((res) => res.json())
-        .catch((err) => console.log(err))
-        .then((res) => {
-            this.setState({purchaised: res});
-        })
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                // llamada a la base de datos
+                fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=0`)
+                .then((res) => res.json())
+                .catch((err) => console.log(err))
+                .then((res) => {
+                    this.setState({purchaised: res});
+                })
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        });
     }
 
     updateStock = (prod) => {
-        fetch(`https://angelgutierrezweb.000webhostapp.com/updateStock.php?stock=${prod.ammount}&img_id=${prod.img_id}`)
-        .catch((err) => console.error(err));
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                fetch(`https://angelgutierrezweb.000webhostapp.com/updateStock.php?stock=${prod.ammount}&img_id=${prod.img_id}&add=0`)
+                .catch((err) => console.error(err));
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        });
     }
 
     handleFinish = () => {
@@ -141,7 +176,6 @@ class Cart extends Component {
             if (found === undefined) {
                 this.fetchData(prod);
             }
-            this.updateStock(prod);
         })
         this.setState({products: [], filtered: []}, () => this.storeData());
     }

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { Text, View, TextInput,
+         TouchableOpacity, ScrollView, Alert } from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
 import { LoginStyle as styles } from '../Styles/LoginStyle';
 import Icon from 'react-native-vector-icons/Ionicons';

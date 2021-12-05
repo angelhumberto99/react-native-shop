@@ -7,7 +7,6 @@ import Cart from './Cart';
 import Sell from './Sell';
 import MyProducts from './MyProducts';
 import MyAccount from './MyAccount';
-import { MenuStyles as Styles } from '../Styles/MenuStyles';
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +15,6 @@ class Menu extends Component {
       super(props);
       this.state = {}
     }
-
 
     render() {
         const { email, user } = this.props.route.params

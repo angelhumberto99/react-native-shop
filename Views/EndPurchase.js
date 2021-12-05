@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
-import { Text, View, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import { Text, View, TextInput, 
+         TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { LoginStyle as styles } from '../Styles/LoginStyle';
 import md5 from 'md5';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NetInfo from "@react-native-community/netinfo";
 
 class EndPurchase extends Component {
     constructor(props) {
@@ -16,26 +18,38 @@ class EndPurchase extends Component {
 
     checkCredentials = () => {
         const { handleFinish, navigation } = this.props.route.params;
-        // Se hace la petición por el método GET a la siguiente url
-        fetch(`https://angelgutierrezweb.000webhostapp.com/sign_In.php?password=${md5(this.state.password)}&email=${this.state.email}`)
-        .then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => {
-            if (response === '0') {
-                Alert.alert(
-                    "Error de credenciales",
-                    "Su contraseña anterior es invalida, intente de nuevo",
-                    [{text: "OK"}]
-                );
+
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                // Se hace la petición por el método GET a la siguiente url
+                fetch(`https://angelgutierrezweb.000webhostapp.com/sign_In.php?password=${md5(this.state.password)}&email=${this.state.email}`)
+                .then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    if (response === '0') {
+                        Alert.alert(
+                            "Error de credenciales",
+                            "Su contraseña anterior es invalida, intente de nuevo",
+                            [{text: "OK"}]
+                        );
+                    } else {
+                        Alert.alert(
+                            "Compra exitosa",
+                            "Su compra ha sido efectuada correctamente",
+                            [{text: "OK", onPress: () => {
+                                handleFinish()
+                                navigation.goBack()
+                            }}]
+                        );
+                    }
+                });
             } else {
                 Alert.alert(
-                    "Compra exitosa",
-                    "Su compra ha sido efectuada correctamente",
-                    [{text: "OK", onPress: () => {
-                        handleFinish()
-                        navigation.goBack()
-                    }}]
-                );
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
             }
         });
     }

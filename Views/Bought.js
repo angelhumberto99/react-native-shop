@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, RefreshControl, TouchableOpacity, Image } from 'react-native';
+import { Text, View, FlatList,
+         RefreshControl, TouchableOpacity, Image,
+         Alert } from 'react-native';
 import { ProductCardStyles } from '../Styles/ProductCardStyles';
 import { MyProductsStyles as styles } from '../Styles/MyProductsStyles';
 import { moneyFormatter } from '../moneyFormatter';
@@ -19,13 +21,23 @@ class Bought extends Component {
     }
 
     getData = () => {
-        // llamada a la base de datos
-        fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=0`)
-        .then((res) => res.json())
-        .catch((err) => console.log(err))
-        .then((res) => {
-            this.setState({data: res});
-        })
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                // llamada a la base de datos
+                fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=0`)
+                .then((res) => res.json())
+                .catch((err) => console.log(err))
+                .then((res) => {
+                    this.setState({data: res});
+                })
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        });
     }
 
     refresh = () => {
@@ -69,7 +81,7 @@ class Bought extends Component {
                         refreshControl={<RefreshControl
                             refreshing={this.state.refreshing}
                             onRefresh={this.refresh} />}
-                        renderItem={({item, index}) => {
+                        renderItem={({item}) => {
                             return (
                                 <TouchableOpacity onPress={() => this.openView(item)} style={styles.productWrapper}>
                                     <View style={styles.productContainer}>

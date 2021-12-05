@@ -10,7 +10,7 @@ import { LoginStyle as InputStyles } from '../Styles/LoginStyle';
 import { Picker } from '@react-native-picker/picker';
 import { SellStyles } from '../Styles/SellStyles';
 import { launchImageLibrary } from 'react-native-image-picker';
-import { thisExpression } from '@babel/types';
+import NetInfo from "@react-native-community/netinfo";
 
 const screenWidth = Dimensions.get('window').width * 0.85;
 const maxImages = 6
@@ -86,6 +86,7 @@ class EditView extends Component {
     }
 
     updateImgs = () => {
+        
         console.log("server uri: ", this.state.serverUri);
         // URL del servidor
         var url = 'https://angelgutierrezweb.000webhostapp.com/updateImgs.php';
@@ -108,37 +109,48 @@ class EditView extends Component {
     }
 
     editData = () => {
-        const { product } = this.props.route.params;
-        var { category, title, price, description, stock } = this.state
-        title = title? title: product.name;
-        price = price? price: product.price;
-        description = description? description: product.description;
-        stock = stock? stock: product.stock;
-        console.log("New data: ", product.img_id, category, title, price, description, stock)
-        fetch(`https://angelgutierrezweb.000webhostapp.com/editArticle.php?name=${title}&category=${category}&price=${price}&description=${description}&stock=${stock}&img_id=${product.img_id}`)
-        .then((res) => res.json())
-        .catch((err) => console.error(err))
-        .then((res) => {
-            console.log("res: ", res)
-            if (res == '1') {
-                this.editImages();
-                Alert.alert(
-                    "Edición realizada",
-                    "Su articulo ha sido actualizado",
-                    [
-                      { text: "ok" },
-                    ],
-                );
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                const { product } = this.props.route.params;
+                var { category, title, price, description, stock } = this.state
+                title = title? title: product.name;
+                price = price? price: product.price;
+                description = description? description: product.description;
+                stock = stock? stock: product.stock;
+                console.log("New data: ", product.img_id, category, title, price, description, stock)
+                fetch(`https://angelgutierrezweb.000webhostapp.com/editArticle.php?name=${title}&category=${category}&price=${price}&description=${description}&stock=${stock}&img_id=${product.img_id}`)
+                .then((res) => res.json())
+                .catch((err) => console.error(err))
+                .then((res) => {
+                    console.log("res: ", res)
+                    if (res == '1') {
+                        this.editImages();
+                        Alert.alert(
+                            "Edición realizada",
+                            "Su articulo ha sido actualizado",
+                            [
+                                { text: "ok" },
+                            ],
+                            );
+                    } else {
+                        Alert.alert(
+                            "Error",
+                            "Ha habido un error al intentar actualizar su información, intentelo de nuevo",
+                            [
+                                { text: "ok" },
+                            ],
+                        );
+                    }
+                })
             } else {
                 Alert.alert(
-                    "Error",
-                    "Ha habido un error al intentar actualizar su información, intentelo de nuevo",
-                    [
-                      { text: "ok" },
-                    ],
-                );
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
             }
-        })
+        });
     }
 
     editImages = () => {
@@ -147,7 +159,18 @@ class EditView extends Component {
             this.state.photos.map(e => {
                 if (!e.uri.includes("https://angelgutierrezweb.000webhostapp.com/")) {
                     count++;
-                    this.uploadImageToServer(e.uri);
+                    // Se revisa la conexión para realizar la llamada al servidor
+                    NetInfo.fetch("wifi").then(state => {
+                        if (state.isConnected) {
+                            this.uploadImageToServer(e.uri);
+                        } else {
+                            Alert.alert(
+                                "Fallo de conexión",
+                                "Verifique que su dispositivo cuente con una conexión a internet estable",
+                                [{text: "OK"}]
+                            ); 
+                        }
+                    });
                 } else {
                     this.setState({serverUri: [...this.state.serverUri, e.uri]});
                 }

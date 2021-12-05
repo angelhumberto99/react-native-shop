@@ -1,8 +1,10 @@
 import React, { Component } from 'react'
-import { Text, View, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native'
+import { Text, View, TextInput,
+         TouchableOpacity, Alert, ScrollView } from 'react-native'
 import { LoginStyle as styles } from '../Styles/LoginStyle';
 import md5 from 'md5';
 import Icon from 'react-native-vector-icons/Ionicons';
+import NetInfo from "@react-native-community/netinfo";
 
 class PasswordEdit extends Component {
     constructor(props) {
@@ -19,41 +21,65 @@ class PasswordEdit extends Component {
 
     checkCredentials = () => {
         const { email } = this.props.route.params;
-        // Se hace la petición por el método GET a la siguiente url
-        fetch(`https://angelgutierrezweb.000webhostapp.com/sign_In.php?password=${md5(this.state.oldPass)}&email=${email}`)
-        .then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => {
-            if (response === '0') {
-                Alert.alert(
-                    "Error de credenciales",
-                    "Su contraseña anterior es invalida, intente de nuevo",
-                    [{text: "OK"}]
-                );
+
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                // Se hace la petición por el método GET a la siguiente url
+                fetch(`https://angelgutierrezweb.000webhostapp.com/sign_In.php?password=${md5(this.state.oldPass)}&email=${email}`)
+                .then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    if (response === '0') {
+                        Alert.alert(
+                            "Error de credenciales",
+                            "Su contraseña anterior es invalida, intente de nuevo",
+                            [{text: "OK"}]
+                        );
+                    } else {
+                        this.fetchEditPass()
+                    }
+                });
             } else {
-                this.fetchEditPass()
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
             }
         });
     }
 
     fetchEditPass = () => {
         const { email, navigation } = this.props.route.params;
-        fetch(`https://angelgutierrezweb.000webhostapp.com/editPass.php?newPass=${md5(this.state.newPass)}&email=${email}`)
-        .then(res => res.json())
-        .catch(error => console.error('Error:', error))
-        .then(response => {
-            if (response === '0') {
-                Alert.alert(
-                    "Error",
-                    "Algo ha ocurrido, intente de nuevo",
-                    [{text: "OK"}]
-                );
+
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) {
+                fetch(`https://angelgutierrezweb.000webhostapp.com/editPass.php?newPass=${md5(this.state.newPass)}&email=${email}`)
+                .then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    if (response === '0') {
+                        Alert.alert(
+                            "Error",
+                            "Algo ha ocurrido, intente de nuevo",
+                            [{text: "OK"}]
+                        );
+                    } else {
+                        Alert.alert(
+                            "Edición exitosa",
+                            "Su contraseña ha sido cambiada correctamente",
+                            [{text: "OK", onPress: () => navigation.goBack()}]
+                        );
+                    }
+                });
             } else {
                 Alert.alert(
-                    "Edición exitosa",
-                    "Su contraseña ha sido cambiada correctamente",
-                    [{text: "OK", onPress: () => navigation.goBack()}]
-                );
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
             }
         });
     }
@@ -61,8 +87,16 @@ class PasswordEdit extends Component {
     changePass = () => {
         // revisar si la nueva contraseña coincide con su confirmación
         if (this.state.newPass === this.state.newPassConfirm) {
-            // revisar si la contraseña anterior es correcta
-            this.checkCredentials()
+            if (this.state.newPass.length > 0) {
+                // revisar si la contraseña anterior es correcta
+                this.checkCredentials()
+            } else {
+                Alert.alert(
+                    "Error de credenciales",
+                    "Alguno de los campos no ha sido llenado, intente de nuevo",
+                    [{text: "OK"}]
+                );
+            }
         } else {
             Alert.alert(
                 "Error de credenciales",

@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, FlatList, RefreshControl, TouchableOpacity, Image, Alert } from 'react-native';
+import { Text, View, FlatList,
+         RefreshControl, TouchableOpacity, Image,
+         Alert } from 'react-native';
 import { ProductCardStyles } from '../Styles/ProductCardStyles';
 import { MyProductsStyles as styles } from '../Styles/MyProductsStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
@@ -20,13 +22,24 @@ class OnSell extends Component {
     }
 
     getData = () => {
-        // llamada a la base de datos
-        fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=1`)
-        .then((res) => res.json())
-        .catch((err) => console.log(err))
-        .then((res) => {
-            this.setState({data: res});
-        })
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) { 
+                // llamada a la base de datos
+                fetch(`https://angelgutierrezweb.000webhostapp.com/getProdsById.php?email=${this.props.email}&on_sale=1`)
+                .then((res) => res.json())
+                .catch((err) => console.log(err))
+                .then((res) => {
+                    this.setState({data: res});
+                });
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        });
     }
 
     refresh = () => {
@@ -36,13 +49,24 @@ class OnSell extends Component {
     }
 
     deleteFromDB = (product) => {
-        // eliminar producto de la base de datos
-        fetch(`https://angelgutierrezweb.000webhostapp.com/deleteProd.php?id=${product.product_id}`)
-        .then((res) => res.json())
-        .catch((err) => console.error(err))
-        .then((res) => {
-            console.log(res)
-        })
+        // Se revisa la conexión para realizar la llamada al servidor
+        NetInfo.fetch("wifi").then(state => {
+            if (state.isConnected) { 
+                // eliminar producto de la base de datos
+                fetch(`https://angelgutierrezweb.000webhostapp.com/deleteProd.php?id=${product.product_id}`)
+                .then((res) => res.json())
+                .catch((err) => console.error(err))
+                .then((res) => {
+                    console.log(res)
+                })
+            } else {
+                Alert.alert(
+                    "Fallo de conexión",
+                    "Verifique que su dispositivo cuente con una conexión a internet estable",
+                    [{text: "OK"}]
+                ); 
+            }
+        }); 
     }
 
     deleteItem = (index) => {

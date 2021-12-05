@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
-import { Text, View, TouchableOpacity, Image, ScrollView, Dimensions, Alert } from 'react-native';
+import { Text, View, TouchableOpacity,
+         Image, ScrollView, Dimensions,
+         Alert } from 'react-native';
 import { ProductViewStyles as styles } from '../Styles/ProductViewStyles';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Carousel, { Pagination } from 'react-native-snap-carousel';
